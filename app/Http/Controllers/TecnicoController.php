@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Estacion;
+use App\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Tecnico;
@@ -21,7 +23,7 @@ class TecnicoController extends Controller
         $tecnicos=Persona::join('tecnicos','personas.id', '=', 'tecnicos.id')
             ->orderBy('nombre','asc')->get();
         foreach ($tecnicos as $tecnico){
-            $tecnico->nombreCompleto();
+            $tecnico->profesion;
         }
         return response()->json($tecnicos);
     }
@@ -48,15 +50,15 @@ class TecnicoController extends Controller
             'ci' => ['required'],
             'extension' => ['required'],
             'nombre' => ['required'],
-            'apellido1' => ['required'],
+            'profesion_id' => ['required'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json(['errors'=>$validator->errors()], 400);
         }
         $persona=Persona::where('ci',$request->ci)->first();
         if (is_null($persona)){
-            Tecnico::create($request->all());
+            Tecnico::createTecnico($request->all());
         } else{
             $tecnico=Tecnico::find($persona->id);
             if(is_null($tecnico)) {
@@ -104,7 +106,7 @@ class TecnicoController extends Controller
             'ci' => ['required', 'unique:personas,ci,'.$id.',id'],
             'extension' => ['required'],
             'nombre' => ['required'],
-            'apellido1' => ['required'],
+            'profesion_id' => ['required'],
         ]);
 
         if ($validator->fails()) {
@@ -120,8 +122,17 @@ class TecnicoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy($id){
+        $estacion = Estacion::where('tecnico_id',$id)->first();
+        $tecnico = Usuario::where('tecnico_id',$id)->first();
+        if (is_null($estacion) && is_null($tecnico)){
+            $tecnico = Tecnico::find($id);
+            $tecnico->delete();
+            $persona= Persona::find($tecnico->id);
+            $persona->delete();
+        } else {
+            return response()->json(['errors'=>['tecnico'=>['No se puede eliminar, registro en uso']]], 400);
+        }
+        return response()->json(null,204);
     }
 }

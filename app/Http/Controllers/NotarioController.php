@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Estacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Persona;
@@ -9,11 +10,16 @@ use App\Notario;
 
 class NotarioController extends Controller
 {
-    public function index(){
-        $notarios=Persona::join('notarios','personas.id', '=', 'notarios.id')
-            ->orderBy('nombre','asc')->get();
+    // c=contratado
+    public function index(Request $request){
+        $notarios=Persona::join('notarios','personas.id', '=', 'notarios.id');
+        if ($request->contratado && $request->contratado==='c'){
+            $notarios=$notarios->where('notarios.contratado',1);
+        }
+        $notarios=$notarios->orderBy('nombre','asc')->get();
+
         foreach ($notarios as $notario){
-            $notario->nombreCompleto();
+            $notario->profesion;
         }
         return response()->json($notarios);
     }
@@ -29,11 +35,12 @@ class NotarioController extends Controller
             'ci' => ['required'],
             'extension' => ['required'],
             'nombre' => ['required'],
-            'apellido1' => ['required'],
+            'profesion_id' => ['required'],
+            'empresa_telefonica' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json(['errors'=>$validator->errors()], 400);
         }
         $persona=Persona::where('ci',$request->ci)->first();
         if (is_null($persona)){
@@ -54,14 +61,36 @@ class NotarioController extends Controller
             'ci' => ['required', 'unique:personas,ci,'.$id.',id'],
             'extension' => ['required'],
             'nombre' => ['required'],
-            'apellido1' => ['required'],
+            'profesion_id' => ['required'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json(['errors'=>$validator->errors()], 400);
         }
         Notario::updateData($request->all(), $id);
         return response()->json();
+    }
+    public function show($id){
+        $notario = Persona::find($id);
+        return response()->json($notario);
+    }
+    public function contratar($id){
+        $notario = Notario::find($id);
+        $notario->contratado = true;
+        $notario->update();
+        return response()->json($notario);
+    }
+    public function destroy($id){
+        $estacion = Estacion::where('notario_id',$id)->first();
+        if (is_null($estacion)){
+            $notario = Notario::find($id);
+            $notario->delete();
+            $persona= Persona::find($notario->id);
+            $persona->delete();
+        } else {
+            return response()->json(['errors'=>['notario'=>['No se puede eliminar, registro en uso']]], 400);
+        }
+        return response()->json(null,204);
     }
 }
 

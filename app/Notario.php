@@ -26,7 +26,7 @@ class Notario extends Model
         $persona->fill($parameters);
         $persona->save($parameters);
         $notario= new Notario();
-        $persona->tecnico()->save($notario);
+        $persona->notario()->save($notario);
     }
     public static function updateData($parameters, $id){
         $parameters=(Object)$parameters;

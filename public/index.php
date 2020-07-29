@@ -4,6 +4,8 @@ header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Authorization,Content-Type, Accept, Access-Control-Request-Method, x-xsrf-token");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE, PATCH");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE, PATCH");
+/*header("Content-Type:application/json");
+header("Accept:application/json");*/
 $method = $_SERVER['REQUEST_METHOD'];
 if($method == "OPTIONS") {
     die();

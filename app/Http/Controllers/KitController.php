@@ -65,21 +65,4 @@ class KitController extends Controller
         return response()->json($kitEquipo);
     }
 
-    public function changeEstadoEquipo(Request $request)
-    {
-        $kit = Kit::find($request->id_kit);
-        $equipo = Equipo::find($request->id_equipo);
-
-        if (!is_null($kit) && !is_null($equipo)) {
-            DB::table('kits_equipos')
-                ->where('id_kit', $request->id_kit)
-                ->where('id_equipo', $request->id_equipo)->update(['estado' => $request->estado]);
-            $equipo->estado = $request->estado;
-            $equipo->update();
-        } else {
-            $error = ['id' => ['El equipo no está existe o no está registrado en este kit']];
-            return response()->json($error, 400);
-        }
-        return response()->json();
-    }
 }

@@ -12,6 +12,7 @@ class Estacion extends Model
            'nro_counter_c',
            'nro_counter_r',
            'tipo_estacion',
+           'punto_empadronamiento_id',
     ];
     protected $guarded = [
         'pro_ele_ref_id',
@@ -25,11 +26,18 @@ class Estacion extends Model
     public function notario(){
         return $this->hasOne(Notario::class, 'id','notario_id' );
     }
+    public function puntoEmpadronamiento(){
+        return $this->belongsTo(
+            PuntoEmpadronamiento::class,
+            'punto_empadronamiento_id'
+        );
+    }
     public function tecnico(){
         return $this->belongsTo(Tecnico::class, 'tecnico_id');
     }
-    public function kit(){
-        return $this->hasOne(Kit::class, 'id','kit_id' );
+    public function equipos(){
+        return $this->belongsToMany(Equipo::class, 'estaciones_equipos','id_estacion', 'id_equipo' )
+            ->withPivot(['estado','observacion','observacion_devolucion']);
     }
 
     public static function create($parameters){

@@ -1,6 +1,11 @@
 <?php
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Persona;
+use App\Profesion;
+use App\Tecnico;
 use Faker\Generator as Faker;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,11 +18,33 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
+$factory->define(App\Usuario::class, function (Faker $faker) {
+    $persona =  factory(Persona::class)->create();
+    Tecnico::create(['id'=>$persona->id]);
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-        'remember_token' => str_random(10),
+        'usuario' => 'admin',
+//        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+        'contrasenia' => Hash::make('123'), // secret
+        'tecnico_id' =>$persona->id,
+        'nivel_acceso' => 0,
+    ];
+});
+
+$factory->define(App\Persona::class, function (Faker $faker) {
+    return [
+        'ci' => $faker->randomNumber(8, true),
+        'nombre' => $faker->name,
+        'apellido1' => $faker->lastName,
+        'apellido2' => $faker->lastName,
+        'extension' => 'PT',
+        'celular' => $faker->randomNumber(8, true),
+        'empresa_telefonica' => 'Entel',
+        'profesion_id' => factory(Profesion::class)->create(),
+    ];
+});
+
+$factory->define(App\Profesion::class, function (Faker $faker) {
+    return [
+        'nombre' => $faker->jobTitle,
     ];
 });

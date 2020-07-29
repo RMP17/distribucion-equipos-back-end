@@ -16,13 +16,18 @@ class CreatePersonasTable extends Migration
         Schema::create('personas', function (Blueprint $table) {
             $table->increments('id');
             $table->char('ci',10);
-            $table->char('nombre',30);
-            $table->char('apellido1',30);
-            $table->char('apellido2',30)->nullable();
+            $table->char('nombre',50);
+            $table->char('apellido1',50)->nullable();
+            $table->char('apellido2',50)->nullable();
             $table->char('extension',3);
             $table->char('celular',10);
             $table->char('empresa_telefonica',10)->nullable();
-            $table->char('profesion',50)->nullable();
+            $table->unsignedInteger('profesion_id');
+            $table->foreign('profesion_id')
+                ->references('id')
+                ->on('profesiones')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

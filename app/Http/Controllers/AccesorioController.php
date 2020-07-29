@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Equipo;
 use App\Accesorio;
@@ -16,7 +17,7 @@ class AccesorioController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Accesorio::all());
     }
 
     /**
@@ -37,16 +38,12 @@ class AccesorioController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'tipo_accesorio' => ['required'],
-            'equipo_id' => ['required'],
+        $request->validate([
+            'nombre' => ['required'],
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-        Accesorio::create($request->all());
-        return response()->json();
+        $accesorio = new Accesorio($request->all());
+        $accesorio->save();
+        return response()->json($accesorio);
     }
 
     /**
@@ -62,17 +59,6 @@ class AccesorioController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -81,7 +67,13 @@ class AccesorioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nombre' => ['required'],
+        ]);
+        $accesorio = Accesorio::find($id);
+        $accesorio->fill($request->all());
+        $accesorio->update();
+        return response()->json($accesorio);
     }
 
     /**
@@ -92,6 +84,13 @@ class AccesorioController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $equipo_accesorio = DB::table('equipos_accesorios')->where('accesorio_id',$id)->first();
+        if (is_null($equipo_accesorio)){
+            $accesorios = Accesorio::find($id);
+            $accesorios->delete();
+        } else {
+            return response()->json(['errors'=>['accesorio'=>['No se puede eliminar, registro en uso']]], 400);
+        }
+        return response()->json(null, 204);
     }
 }

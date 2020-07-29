@@ -10,6 +10,8 @@ class ProEleRef extends Model
     protected $fillable = [
         'descripcion',
         'fecha',
+        'fecha_final',
+        'tipo',
     ];
     protected $guarded = [
         'estado'

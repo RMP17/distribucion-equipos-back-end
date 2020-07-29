@@ -17,6 +17,8 @@ class CreateProEleRefTable extends Migration
             $table->increments('id');
             $table->char('descripcion',200);
             $table->date('fecha');
+            $table->date('fecha_final')->nullable();
+            $table->char('tipo',100)->nullable();
             $table->boolean('estado')->default('1');
         });
     }

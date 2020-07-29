@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKitsTable extends Migration
+class CreateCoordinadoresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateKitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kits', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('pro_ele_ref_id')->unsigned();
-            $table->foreign('pro_ele_ref_id')
-                ->references('id')->on('pro_ele_ref')
+        Schema::create('coordinadores', function (Blueprint $table) {
+            $table->integer('id')->unsigned();
+            $table->primary('id');
+            $table->foreign('id')->references('id')->on('personas')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
@@ -30,6 +29,6 @@ class CreateKitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kits');
+        Schema::dropIfExists('coordinadores');
     }
 }

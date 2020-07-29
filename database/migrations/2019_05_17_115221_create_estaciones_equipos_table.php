@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKitsEquiposTable extends Migration
+class CreateEstacionesEquiposTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +14,17 @@ class CreateKitsEquiposTable extends Migration
      */
     public function up()
     {
-        Schema::create('kits_equipos', function (Blueprint $table) {
-            $table->integer('id_kit')->unsigned();
+        Schema::create('estaciones_equipos', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('id_estacion')->unsigned();
             $table->integer('id_equipo')->unsigned();
             // tipo de estado
-            // b=bien; r=en reparacion; d=de baja;
+            // b=bien; r=en reparacion; d=dañado
             $table->char('estado',1);
-            $table->primary(['id_kit', 'id_equipo']);
-            $table->foreign('id_kit')
-                ->references('id')->on('kits')
+            $table->text('observacion')->nullable();
+            $table->text('observacion_devolucion')->nullable();
+            $table->foreign('id_estacion')
+                ->references('id')->on('estaciones')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('id_equipo')
@@ -29,6 +32,7 @@ class CreateKitsEquiposTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
+        DB::statement('ALTER TABLE estaciones_equipos DROP PRIMARY KEY, ADD PRIMARY KEY (id, id_estacion,id_equipo)');
     }
 
     /**
@@ -38,6 +42,6 @@ class CreateKitsEquiposTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kits_equipos');
+        Schema::dropIfExists('estaciones_equipos');
     }
 }

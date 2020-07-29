@@ -18,6 +18,7 @@ class CreateNotariosTable extends Migration
             // tipo_estacion
             // f=estacion fija; m=estacion movil
             $table->boolean('experiencia_procesos_anteriores')->default('0');
+            $table->boolean('contratado')->default(1);
             $table->primary('id');
             $table->foreign('id')->references('id')->on('PERSONAS')
                 ->onUpdate('cascade')

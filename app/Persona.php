@@ -15,18 +15,26 @@ class Persona extends Model
         'extension',
         'celular',
         'empresa_telefonica',
-        'profesion',
+        'profesion_id'
     ];
     protected $guarded = [];
     public $timestamps = false;
+    protected $appends = ['nombre_completo'];
 
     public function tecnico(){
         return $this->hasOne(Tecnico::class, 'id','id' );
     }
+    public function profesion(){
+        return $this->belongsTo(Profesion::class, 'profesion_id');
+    }
     public function notario(){
         return $this->hasOne(Notario::class, 'id','id' );
     }
-    public function nombreCompleto(){
-        $this->nombre= $this->nombre.' '.$this->apellido1.' '.$this->apellido2;
+    public function coordinador(){
+        return $this->hasOne(Coordinador::class, 'id','id' );
+    }
+    public function getNombreCompletoAttribute()
+    {
+        return "$this->nombre $this->apellido1 $this->apellido2";
     }
 }

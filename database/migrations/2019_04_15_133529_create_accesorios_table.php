@@ -15,14 +15,7 @@ class CreateAccesoriosTable extends Migration
     {
         Schema::create('accesorios', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('tipo_accesorio',50);
-            // tipo de estado
-            // b=bien; r=en reparacion; d=de baja;
-            $table->char('estado',1)->default('b');
-            $table->integer('equipo_id')->unsigned();
-            $table->foreign('equipo_id')
-                ->references('id')
-                ->on('equipos');
+            $table->char('nombre',100);
         });
     }
 

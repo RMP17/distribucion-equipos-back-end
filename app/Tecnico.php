@@ -13,7 +13,7 @@ class Tecnico extends Model
     public function persona(){
         return $this->belongsTo(Persona::class, 'id' );
     }
-    public static function create($parameters){
+    public static function createTecnico($parameters){
         $persona = new Persona();
         $persona->fill($parameters);
         $persona->save($parameters);
